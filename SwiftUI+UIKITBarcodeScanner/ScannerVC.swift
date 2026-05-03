@@ -8,9 +8,9 @@
 import UIKit
 import AVFoundation
 
-enum CameraError {
-    case invalideDeviceInput
-    case invalideScannedValue
+enum CameraError : String {
+    case invalideDeviceInput = "Invalid device input"
+    case invalideScannedValue = "Invalid scanned value"
 }
 
 protocol ScannerVCDelegate : AnyObject {
@@ -32,10 +32,34 @@ final class ScannerVC: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+//    deinit {
+//        if captureSession.isRunning {
+//            captureSession.stopRunning()
+//        }
+//    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setCaptureSession()
+    }
+    
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        if !captureSession.isRunning {
+//            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+//                self?.captureSession.startRunning()
+//            }
+//        }
+//    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if captureSession.isRunning {
+            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                self?.captureSession.stopRunning()
+            }
+        }
     }
 
     override func viewDidLayoutSubviews() {
@@ -88,7 +112,7 @@ final class ScannerVC: UIViewController {
         previewLayer!.videoGravity = .resizeAspectFill
         view.layer.addSublayer(previewLayer!)
 
-        captureSession.startRunning()
+        // Don't start here - will start in viewWillAppear
     }
 
 }

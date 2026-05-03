@@ -14,7 +14,7 @@ struct SwiftUI_UIKITBarcodeScannerApp: App {
 
     var body: some Scene {
         WindowGroup {
-            BarcodeScanner()
+            BarcodeScannerView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
