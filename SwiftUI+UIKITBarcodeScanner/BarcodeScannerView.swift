@@ -10,12 +10,12 @@ import CoreData
 
 struct BarcodeScannerView: View {
 
-    @State var scannedBarcode : String = ""
+    @StateObject var viewModel = BarcodeScannerViewModel()
 
     var body : some View {
         NavigationStack {
             VStack {
-                ScannerView(scanResult: $scannedBarcode)
+                ScannerView(scanResult: $viewModel.scannedBarcode, alertItem: $viewModel.alertItem)
                     .frame(maxWidth: .infinity)
                     .frame(maxHeight: 300)
 
@@ -24,13 +24,21 @@ struct BarcodeScannerView: View {
                 Label("Scanned Barcode", systemImage: "barcode.viewfinder")
                     .font(.title)
 
-                Text(scannedBarcode.isEmpty ? "Not scanned yet" : scannedBarcode)
+                Text(viewModel.statusContext)
                     .bold()
                     .font(.largeTitle)
-                    .foregroundColor(scannedBarcode.isEmpty ? .red : .green)
+                    .foregroundColor(viewModel.statusTextColor)
                     .padding()
 
-            }.navigationTitle("Barcode Scanner")
+            }
+            .navigationTitle("Barcode Scanner")
+            .alert(item: $viewModel.alertItem) { alertItem in
+                Alert(
+                    title: Text(alertItem.title),
+                    message: Text(alertItem.message),
+                    dismissButton: alertItem.dismissButton
+                )
+            }
         }
     }
 }
